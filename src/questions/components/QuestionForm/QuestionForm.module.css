@@ -1,0 +1,19 @@
+.form {
+  margin: 2rem 0;
+}
+
+.form input {
+  border-radius: 8px;
+  border: none;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+  background: #e9f5f8;
+}
+
+.form button {
+  margin-right: 0.5rem;
+  border-radius: 8px;
+  border: none;
+  background: #e9f5f8;
+  cursor: pointer;
+}

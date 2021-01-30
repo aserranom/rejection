@@ -1,0 +1,36 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": [
+          "last 2 versions",
+          "safari >= 7"
+        ]
+      }
+    ],
+    "@babel/preset-react"
+  ],
+  "plugins": [
+    [
+      "@babel/transform-runtime"
+    ]
+  ],
+  "env": {
+    "development": {
+      "presets": ["next/babel"]
+    },
+    "production": {
+      "presets": ["next/babel"]
+    },
+    "test": {
+      "presets": [
+        "@babel/env",
+        "@babel/react"
+      ],
+      "plugins": [
+        "styled-jsx/babel"
+      ]
+    }
+  }
+}
