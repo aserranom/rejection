@@ -44,7 +44,7 @@ export const addQuestion = ({
 } = {}) =>
   Object.keys(STATUSES).includes(status)
     ? {
-        type: 'ADD_QUESTION',
+        type: 'questions/addQuestion',
         payload: {
           id: generateId(),
           timestamp: status === UNANSWERED ? undefined : Date.now(),
@@ -56,7 +56,7 @@ export const addQuestion = ({
     : throwError('Invalid Status');
 
 export const answerQuestion = ({ id = '', status = UNANSWERED } = {}) => ({
-  type: 'ANSWER_QUESTION',
+  type: 'questions/answerQuestion',
   payload: {
     id,
     status,
