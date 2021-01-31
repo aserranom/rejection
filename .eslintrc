@@ -7,9 +7,10 @@
   },
   "plugins": [
     "react",
-    "react-hooks"
+    "react-hooks",
+    "testcafe"
   ],
-  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:prettier/recommended"],
+  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:prettier/recommended", "plugin:testcafe/recommended"],
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2018

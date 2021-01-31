@@ -1,4 +1,5 @@
 import React from 'react';
+import Head from 'next/head';
 
 import { QuestionFormContainer } from '../src/questions/components/QuestionForm/QuestionFormContainer';
 import { QuestionsContainer } from '../src/questions/components/Questions/QuestionsContainer';
@@ -9,6 +10,9 @@ import styles from '../styles/Home.module.css';
 export default function Home() {
   return (
     <>
+      <Head>
+        <title>The Rejection App</title>
+      </Head>
       <div className={styles.container}>
         <h1 className={styles.title}>The Rejection App</h1>
         <p>

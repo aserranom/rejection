@@ -36,7 +36,7 @@ export const QuestionForm = ({ onSubmit }) => {
       />
       <button
         type="button"
-        title="Accepted"
+        title={ACCEPTED}
         onClick={() => handleSubmit(ACCEPTED)}
         disabled={!question || !askee}
       >
@@ -44,7 +44,7 @@ export const QuestionForm = ({ onSubmit }) => {
       </button>
       <button
         type="button"
-        title="Rejected"
+        title={REJECTED}
         onClick={() => handleSubmit(REJECTED)}
         disabled={!question || !askee}
       >
@@ -52,7 +52,7 @@ export const QuestionForm = ({ onSubmit }) => {
       </button>
       <button
         type="button"
-        title="Unanswered"
+        title={UNANSWERED}
         onClick={() => handleSubmit(UNANSWERED)}
         disabled={!question || !askee}
       >

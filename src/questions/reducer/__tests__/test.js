@@ -12,7 +12,7 @@ import {
 
 const { ACCEPTED, REJECTED, UNANSWERED } = STATUSES;
 
-const getQuestionInput = ({
+export const getQuestionInput = ({
   question = 'This is a test question',
   askee = 'This is a test askee',
   status = UNANSWERED,

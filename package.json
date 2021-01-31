@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "test": "riteway -r @babel/register -r @babel/polyfill -r ./src/mocks/css.js src/**/test.js",
+    "test:functional": "testcafe chrome --app 'vercel dev' src/functional-tests",
     "lint": "eslint --fix . && echo 'Lint complete.'",
     "watch": "watch 'clear && npm run -s test | tap-nirvana && npm run -s lint' src"
   },
@@ -31,11 +32,13 @@
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-testcafe": "^0.2.1",
     "ignore-styles": "^5.0.1",
     "nyc": "^15.1.0",
     "prettier": "^2.2.1",
     "riteway": "^6.2.1",
     "tap-nirvana": "^1.1.0",
+    "testcafe": "^1.10.1",
     "watch": "^1.0.2"
   }
 }
