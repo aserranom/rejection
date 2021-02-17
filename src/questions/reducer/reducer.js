@@ -1,6 +1,5 @@
 import { isToday } from '../../utils/dates';
 import { generateId } from '../../utils/idGenerator';
-import { throwError } from '../../utils/throwError';
 
 export const STATUSES = {
   ACCEPTED: 'ACCEPTED',
@@ -18,73 +17,122 @@ const SCORES = {
   [UNANSWERED]: 0,
 };
 
-export const reducer = (state = [], { type = '', payload = {} } = {}) => {
+export const createState = (questions = []) => ({
+  questions: [...questions],
+});
+
+export const reducer = (
+  state = createState(),
+  { type = '', payload = {} } = {}
+) => {
   switch (type) {
     case addQuestion().type:
-      return [...state, payload];
+      return { ...state, questions: [...state.questions, payload] };
     case answerQuestion().type:
-      return state.map((question) =>
-        question.status === UNANSWERED && question.id === payload.id
-          ? {
-              ...question,
-              status: payload.status,
-              timestamp: payload.timestamp,
-            }
-          : question
-      );
+      return {
+        ...state,
+        questions: state.questions.map((question) =>
+          question.status === UNANSWERED && question.id === payload.id
+            ? {
+                ...question,
+                status: payload.status,
+                timestamp: payload.timestamp,
+              }
+            : question
+        ),
+      };
+    case editQuestion().type: {
+      const { id, ...updatedFields } = payload;
+      return {
+        ...state,
+        questions: state.questions.map((question) =>
+          question.id === id
+            ? {
+                ...question,
+                ...updatedFields,
+              }
+            : question
+        ),
+      };
+    }
     default:
       return state;
   }
 };
 
 export const addQuestion = ({
+  id = generateId(),
   question = '',
   askee = '',
   status = UNANSWERED,
-} = {}) =>
-  Object.keys(STATUSES).includes(status)
-    ? {
-        type: 'questions/addQuestion',
-        payload: {
-          id: generateId(),
-          timestamp: status === UNANSWERED ? undefined : Date.now(),
-          question,
-          askee,
-          status,
-        },
-      }
-    : throwError('Invalid Status');
+  timestamp = status === UNANSWERED || !Object.keys(STATUSES).includes(status)
+    ? undefined
+    : Date.now(),
+} = {}) => ({
+  type: 'questions/addQuestion',
+  payload: {
+    id,
+    timestamp,
+    question,
+    askee,
+    status: Object.keys(STATUSES).includes(status) ? status : UNANSWERED,
+  },
+});
 
-export const answerQuestion = ({ id = '', status = UNANSWERED } = {}) => ({
+export const answerQuestion = ({
+  id = '',
+  status = UNANSWERED,
+  timestamp = status === UNANSWERED ? undefined : Date.now(),
+} = {}) => ({
   type: 'questions/answerQuestion',
   payload: {
     id,
     status,
-    timestamp: status === UNANSWERED ? undefined : Date.now(),
+    timestamp,
+  },
+});
+
+export const editQuestion = (question = {}) => ({
+  type: 'questions/editQuestion',
+  payload: {
+    ...question,
+    ...(question.status
+      ? { timestamp: question.status === UNANSWERED ? undefined : Date.now() }
+      : {}),
   },
 });
 
 export const getSingleScore = ({ status }) => SCORES[status];
 
 export const getTotalScore = (state) =>
-  state.reduce((score, question) => score + getSingleScore(question), 0);
+  getQuestions(state).reduce(
+    (score, question) => score + getSingleScore(question),
+    0
+  );
 
 export const getTodayScore = (state) =>
-  state.reduce(
+  getQuestions(state).reduce(
     (score, question) =>
       score + (isToday(question.timestamp) ? getSingleScore(question) : 0),
     0
   );
 
-export const localStorageToState = () =>
-  (typeof window !== 'undefined' &&
-    JSON.parse(localStorage.getItem(STATE_KEY))) ||
-  [];
+export const localStorageToState = () => {
+  const questions =
+    typeof window !== 'undefined' &&
+    JSON.parse(localStorage.getItem(STATE_KEY));
+  return createState(Array.isArray(questions) ? questions : []);
+};
 
 export const stateToLocalStorage = (state) =>
-  localStorage.setItem(STATE_KEY, JSON.stringify(state));
+  localStorage.setItem(STATE_KEY, JSON.stringify(getQuestions(state)));
 
-export const sortQuestions = (questions) =>
-  [...questions].sort(
+export const sortQuestions = (state) =>
+  [...getQuestions(state)].sort(
     ({ timestamp: a = Infinity }, { timestamp: b = Infinity }) => b - a
   );
+
+export const getQuestions = ({ questions }) => questions;
+
+export const getQuestion = ({ state, id }) =>
+  getQuestions(state).find((question) => question.id === id);

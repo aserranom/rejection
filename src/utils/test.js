@@ -1,7 +1,7 @@
 import { describe, Try } from 'riteway';
 
-import { throwError } from '../throwError';
-import { isToday, startOfDay } from '../dates';
+import { throwError } from './throwError';
+import { isToday, startOfDay } from './dates';
 
 describe('throwError()', async (assert) => {
   assert({
@@ -42,6 +42,7 @@ describe('startOfDay()', async (assert) => {
   });
   {
     const now = new Date();
+
     assert({
       given: 'no arguments',
       should: 'return the beginning of today',

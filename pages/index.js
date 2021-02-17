@@ -1,13 +1,19 @@
-import React from 'react';
+import { object } from 'prop-types';
+import { connect } from 'react-redux';
+import { useEffect } from 'react';
 import Head from 'next/head';
 
 import { QuestionFormContainer } from '../src/questions/components/QuestionForm/QuestionFormContainer';
 import { QuestionsContainer } from '../src/questions/components/Questions/QuestionsContainer';
 import { ScoreCardsContainer } from '../src/questions/components/ScoreCards/ScoreCardsContainer';
+import { stateToLocalStorage } from '../src/questions/reducer/reducer';
 
 import styles from '../styles/Home.module.css';
 
-export default function Home() {
+const Home = ({ state }) => {
+  useEffect(() => {
+    stateToLocalStorage(state);
+  }, [state]);
   return (
     <>
       <Head>
@@ -24,7 +30,13 @@ export default function Home() {
       </div>
     </>
   );
-}
+};
+
+Home.propTypes = {
+  state: object,
+};
+
+export default connect((state) => ({ state }))(Home);
 
 /*
 
@@ -35,5 +47,5 @@ Notes to self:
 - Don't write separate unit tests for action creators and selectors (*)
 - Rewrite action types as feature/type (eg: question/addQuestion)
 - Functional Tests for Container Components
-- Verify, pure components can hold their own local state right?
+- !Action creators and selectors are the public API for your reducer!
 */

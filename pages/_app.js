@@ -1,13 +1,17 @@
 import { node, object } from 'prop-types';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 
-import { AppProvider } from '../src/app/providers/AppProvider';
+import { localStorageToState, reducer } from '../src/questions/reducer/reducer';
+
 import '../styles/globals.css';
 
+const store = createStore(reducer, localStorageToState());
 function MyApp({ Component, pageProps }) {
   return (
-    <AppProvider>
+    <Provider store={store}>
       <Component {...pageProps} />
-    </AppProvider>
+    </Provider>
   );
 }
 

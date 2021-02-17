@@ -1,18 +1,29 @@
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import { describe } from 'riteway';
 import render from 'riteway/render-component';
 
 import { generateId } from '../../../utils/idGenerator';
-import { STATUSES } from '../../reducer/reducer';
+import { createState, reducer, STATUSES } from '../../reducer/reducer';
 import { Questions } from './Questions';
 
 const { ACCEPTED, REJECTED, UNANSWERED } = STATUSES;
 
+const ReduxWrapper = ({ children }) => (
+  <Provider store={createStore(reducer, createState())}>{children}</Provider>
+);
+
 const createQuestions = (questions = []) =>
-  render(<Questions questions={questions} />);
+  render(
+    <ReduxWrapper>
+      <Questions questions={questions} />
+    </ReduxWrapper>
+  );
 
 describe('Questions component', async (assert) => {
   {
     const $ = createQuestions();
+
     assert({
       given: 'no argument',
       should: 'render an empty div',
@@ -43,7 +54,9 @@ describe('Questions component', async (assert) => {
         status: UNANSWERED,
       },
     ];
+
     const $ = createQuestions(questions);
+
     assert({
       given: '3 questions',
       should: 'render 3 questions',

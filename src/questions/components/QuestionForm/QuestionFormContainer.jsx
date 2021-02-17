@@ -1,11 +1,13 @@
-import React from 'react';
+import { connect } from 'react-redux';
 
-import { useAppState } from '../../../app/providers/AppProvider';
 import { addQuestion } from '../../reducer/reducer';
 import { QuestionForm } from './QuestionForm';
 
-export const QuestionFormContainer = () => {
-  const { dispatch } = useAppState();
-  const handleSubmit = (question) => dispatch(addQuestion(question));
-  return <QuestionForm onSubmit={handleSubmit} />;
+const actionCreators = {
+  onSubmit: addQuestion,
 };
+
+export const QuestionFormContainer = connect(
+  null,
+  actionCreators
+)(QuestionForm);

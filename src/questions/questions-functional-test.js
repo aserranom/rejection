@@ -1,7 +1,7 @@
 import { ClientFunction, Selector } from 'testcafe';
 
 import { STATUSES } from '../questions/reducer/reducer';
-import { getQuestionInput } from '../questions/reducer/__tests__/test';
+import { getQuestionInput } from './reducer/test';
 
 const { ACCEPTED, REJECTED, UNANSWERED } = STATUSES;
 
@@ -11,7 +11,7 @@ const addQuestion = ({ t, question, askee, status }) =>
     .typeText('[name=askee]', askee)
     .click(`[title=${status}]`);
 
-fixture`Rejection App: Page Tests`.page('localhost:3000');
+fixture`Rejection App: Page Tests`.page('localhost:3030');
 
 test('Page should load and display the correct title', async (t) => {
   const actual = Selector('h1').innerText;
@@ -19,7 +19,7 @@ test('Page should load and display the correct title', async (t) => {
   await t.expect(actual).eql(expected);
 });
 
-fixture`Rejection App: Question Form Tests`.page('localhost:3000');
+fixture`Rejection App: Question Form Tests`.page('localhost:3030');
 
 test('As a User I can add Questions', async (t) => {
   const acceptedQuestionInput = getQuestionInput({ status: ACCEPTED });
@@ -76,7 +76,7 @@ test('As a User I can add Questions', async (t) => {
     .eql(expected.rejected.status);
 });
 
-fixture`Rejection App: Question Answer Tests`.page('localhost:3000');
+fixture`Rejection App: Question Answer Tests`.page('localhost:3030');
 
 test('As a User I can answer an unanswered Question', async (t) => {
   const questionInput = getQuestionInput({ status: UNANSWERED });
@@ -100,7 +100,7 @@ test('As a User I can answer an unanswered Question', async (t) => {
     .eql(expected.status);
 });
 
-fixture`Rejection App: Local Storage Tests`.page('localhost:3000');
+fixture`Rejection App: Local Storage Tests`.page('localhost:3030');
 
 test('As a User added questions persist through navigation', async (t) => {
   const questionInput = getQuestionInput({ status: ACCEPTED });
@@ -124,3 +124,65 @@ test('As a User added questions persist through navigation', async (t) => {
     .expect(actual.status)
     .eql(expected.status);
 });
+
+fixture`Rejection App: Edit Question Tests`.page('localhost:3030');
+
+// A bit difficult to apply AAA here should I split it in 2 tests?
+test('As a user I can toggle edit mode', async (t) => {
+  await addQuestion({
+    ...getQuestionInput({ status: ACCEPTED }),
+    t,
+  });
+  const questionCard = Selector('[class^=Question_card');
+  const editButton = questionCard.find('[class^=Question_editWrapper]');
+
+  await t.hover(questionCard).click(editButton);
+  await t.expect(editButton.textContent).eql('👍');
+
+  await t.click(editButton);
+  await t.expect(editButton.textContent).eql('✏️');
+});
+
+test('As a user I can edit a question', async (t) => {
+  const questionIdToUpdate = 'questionIdToUpdate';
+  const newStatus = REJECTED;
+  const newQuestion = 'This question has been updated';
+  const newAskee = 'This askee has been updated';
+  await addQuestion({
+    ...getQuestionInput({
+      id: questionIdToUpdate,
+      status: ACCEPTED,
+    }),
+    t,
+  });
+  const questionCard = Selector('[class^=Question_card');
+  const editButton = questionCard.find('[class^=Question_editWrapper]');
+  const questionInput = questionCard.find('input[name=question]');
+  const askeeInput = questionCard.find('input[name=askee]');
+  const statusSelect = questionCard.find('select[name=status]');
+  const statusSelectOption = statusSelect.find('option');
+
+  await t.hover(questionCard).click(editButton);
+  await t.selectText(questionInput).typeText(questionInput, newQuestion);
+  await t.selectText(askeeInput).typeText(askeeInput, newAskee);
+  await t.click(statusSelect).click(statusSelectOption.withText(newStatus));
+  await t.click(editButton);
+
+  await t
+    .expect(questionCard.find('[class^=Question_question]').innerText)
+    .eql(newQuestion);
+  await t
+    .expect(questionCard.find('[class^=Question_details]').innerText)
+    .contains(newAskee);
+  await t
+    .expect(questionCard.find('[class^=Question_scoreStatus]').innerText)
+    .eql(newStatus);
+});
+
+/*
+The selector value is evaluated each time you :
+
+use the selector for an action;
+assert selector's properties;
+call the selector directly in code to get it's state;
+*/

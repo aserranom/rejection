@@ -6,18 +6,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "riteway -r @babel/register -r @babel/polyfill -r ./src/mocks/css.js src/**/test.js",
-    "test:functional": "testcafe chrome --app 'vercel dev' src/functional-tests",
+    "test": "riteway -r @babel/register -r @babel/polyfill -r ./src/mocks/css.js 'src/**/test.js'",
+    "test:functional": "testcafe chrome --app 'vercel dev --listen 3030' -s takeOnFails=true 'src/**/*-functional-test.js'",
     "lint": "eslint --fix . && echo 'Lint complete.'",
     "watch": "watch 'clear && npm run -s test | tap-nirvana && npm run -s lint' src"
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",
+    "@reduxjs/toolkit": "^1.5.0",
+    "classnames": "^2.2.6",
     "nanoid": "^3.1.20",
     "next": "10.0.5",
     "prop-types": "^15.7.2",
     "react": "17.0.1",
-    "react-dom": "17.0.1"
+    "react-dom": "17.0.1",
+    "react-redux": "^7.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
